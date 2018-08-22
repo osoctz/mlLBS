@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
+import hashlib
 import json
 import os
-import time
-from urllib import parse
-import hashlib
 import urllib.request
-import time
+from urllib import parse
 
 ak = 'e8IGpl0CaVuGCBCLPdW9U1rIffWfBezi'
 # SK
@@ -93,7 +91,7 @@ def get_full_region_data(query, region):
 
         data = json.loads(res.decode())
         prev_total = len(data['results'])  # 前一次数据总量
-        total_data.extend(data['results'])
+        total_data.extend(reconstruct_dict(data['results']))
 
         try:
             while prev_total > 0:
@@ -104,13 +102,13 @@ def get_full_region_data(query, region):
                 prev_total = len(data['results'])
                 # print('total:%s,page_num:%s,page_size:%s' % (prev_total, page_num, page_size))
 
-                total_data.extend(data['results'])
+                total_data.extend(reconstruct_dict(data['results']))
                 # time.sleep(1)  # 规避方案,因为百度接口的并发访问检测为秒级
         except Exception:
             print('错误:%s' % (data['message']))
         if not os.path.exists(key):
             os.mkdir(key)
-        write_local_file(key+'/'+region + '_' + key + '.txt', json.dumps(total_data, ensure_ascii=False, indent=4))
+        write_local_file(key + '/' + region + '_' + key + '.txt', json.dumps(total_data, ensure_ascii=False, indent=4))
 
 
 def get_full_bounds_data(query, loc):
@@ -202,16 +200,29 @@ def next_area(key, data):
                     get_full_region_data(key, node['name'])
 
 
+def reconstruct_dict(array_data):
+    _array_data = []
+    for d in array_data:
+        if 'street_id' in d:
+            del d['street_id']
+        if 'detail' in d:
+            del d['detail']
+        if 'uid' in d:
+            del d['uid']
+        _array_data.append(d)
+    return _array_data
+
+
 if __name__ == '__main__':
     # print(http_url(get_urt('金盾饭店')));
-    key = '公交车站'
+    key = '飞机场,地铁站,火车站,长途汽车站'
     f = open('config/nj.txt', 'r', encoding='utf8')
 
     data = json.loads(f.read())
     next_area(key, data)
 
     f.close()
-    #get_full_region_data('交通设施', '南京市下关区')
+    # get_full_region_data('交通设施', '南京市下关区')
 
     # 按矩形区域检索
     # loc = LocaDiv('29.8255, 115.367400, 30.2194, 115.8287')
