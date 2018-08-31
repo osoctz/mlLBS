@@ -214,15 +214,15 @@ def reconstruct_dict(array_data):
 
 
 if __name__ == '__main__':
-    # print(http_url(get_urt('金盾饭店')));
-    key = '飞机场,地铁站,火车站,长途汽车站'
-    f = open('config/nj.txt', 'r', encoding='utf8')
-
-    data = json.loads(f.read())
-    next_area(key, data)
-
-    f.close()
-    # get_full_region_data('交通设施', '南京市下关区')
+    #print(http_url(get_urt('一门闸')));
+    # key = '公交车站'
+    # f = open('config/nj.txt', 'r', encoding='utf8')
+    #
+    # data = json.loads(f.read())
+    # next_area(key, data)
+    #
+    # f.close()
+    get_full_region_data('上海吴淞口站', '上海市')
 
     # 按矩形区域检索
     # loc = LocaDiv('29.8255, 115.367400, 30.2194, 115.8287')
